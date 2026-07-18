@@ -15,8 +15,8 @@ Bench.registerTool({
         padding:12px;
         margin:6px 0 0;
         overflow-x:auto;
+        max-width:100%;
       }
-
       .badge{
         display:inline-block;
         font-size:0.79em;
