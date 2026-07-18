@@ -172,15 +172,23 @@ body{
 .sidebar-foot{ padding-top:14px; font-size:0.73em; color:var(--ink-faint); }
 
 /* ---------- Content ---------- */
-.content{ flex:1; min-width:0; padding:36px clamp(16px, 3vw, 76px); overflow-y:auto; }
+.content{
+  flex:1;
+  min-width:0;
+  /* fluid padding: grows with viewport instead of stepping at fixed breakpoints */
+  padding:clamp(24px, 2.5vw, 64px) clamp(16px, 4vw, 120px);
+  overflow-y:auto;
+}
 
 .empty-state{ max-width:420px; margin-top:80px; }
 .empty-title{ font-size:1.2em; font-weight:600; margin:0 0 6px; }
 .empty-sub{ color:var(--ink-muted); margin:0; line-height:1.55; font-size:0.9em; }
 
-/* Tool panels take the full width the content column allows — no fixed cap,
-   so wide widgets (like a diff table) can actually use the screen. */
-.tool-panel{ display:none; width:100%; max-width:1400px; }
+/* Tool panels now use all width the content column gives them — no cap.
+   Text-heavy tools (JWT payload, hash rows) stay readable on their own
+   because their inner elements (pre, output-row) are content-sized, not
+   full-bleed; the diff view opts into full width explicitly (below). */
+.tool-panel{ display:none; width:100%; }
 .tool-panel.active{ display:block; }
 
 .tool-title{ font-size:1.27em; font-weight:600; margin:0 0 4px; letter-spacing:-0.01em; }
