@@ -9,13 +9,7 @@
   const mountedPanels = {}; // toolId -> panel element (kept alive so in-session input survives switching)
   let activeToolId = null;
 
-  function sectionPrefix(sectionId){
-    return sectionId.slice(0, 3).toUpperCase();
-  }
-
   function buildSidebar(){
-    const sectionCounters = {};
-
     Bench.sections.forEach(section => {
       const sectionTools = Bench.tools.filter(t => t.section === section.id);
       if(sectionTools.length === 0) return;
@@ -35,9 +29,6 @@
       body.className = "acc-body";
 
       sectionTools.forEach(tool => {
-        sectionCounters[section.id] = (sectionCounters[section.id] || 0) + 1;
-        tool._specCode = `${sectionPrefix(section.id)}·${String(sectionCounters[section.id]).padStart(2, "0")}`;
-
         const link = document.createElement("button");
         link.type = "button";
         link.className = "tool-link";
@@ -77,15 +68,6 @@
         panel.id = `panel-${toolId}`;
         contentEl.appendChild(panel);
         tool.mount(panel);
-
-        const titleEl = panel.querySelector(".tool-title");
-        if(titleEl && tool._specCode){
-          const plate = document.createElement("span");
-          plate.className = "spec-plate";
-          plate.textContent = tool._specCode;
-          titleEl.appendChild(plate);
-        }
-
         mountedPanels[toolId] = panel;
       }
 
@@ -99,7 +81,7 @@
     closeMobileNav();
   }
 
-  // ---------- Mobile off-canvas nav ----------
+  // ---------- Mobile off-canvas nav (needed: sidebar is off-canvas below 720px) ----------
   function openMobileNav(){
     sidebarEl.classList.add("open");
     backdropEl.classList.add("show");
