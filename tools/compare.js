@@ -1,9 +1,134 @@
-// tools/compare.js
+// tools/compare.js — component + its own scoped CSS
 Bench.registerTool({
   id: "text-compare",
   section: "text",
   label: "Text Comparison",
   mount(panel){
+    Bench.injectStyle("compare", `
+      .cmp-toolbar{
+        display:flex;
+        flex-wrap:wrap;
+        align-items:center;
+        gap:8px;
+        margin-bottom:18px;
+      }
+      .cmp-btn, .cmp-toggle{
+        border:1px solid var(--border);
+        background:var(--panel);
+        border-radius:var(--radius-sm);
+        font-size:0.79em;
+        font-weight:500;
+        padding:6px 10px;
+        cursor:pointer;
+        color:var(--ink-muted);
+      }
+      .cmp-btn:hover{ color:var(--accent); border-color:var(--accent); }
+      .cmp-btn.primary{ background:var(--ink); color:#fff; border-color:var(--ink); }
+      .cmp-btn.primary:hover{ opacity:0.9; color:#fff; }
+      .cmp-toggle.active{ color:var(--accent); border-color:var(--accent); background:var(--accent-soft); }
+
+      .cmp-seg{ display:flex; border:1px solid var(--border); border-radius:var(--radius-sm); overflow:hidden; }
+      .cmp-seg-btn{
+        border:none;
+        background:var(--panel);
+        font-size:0.79em;
+        font-weight:500;
+        padding:6px 12px;
+        cursor:pointer;
+        color:var(--ink-muted);
+      }
+      .cmp-seg-btn + .cmp-seg-btn{ border-left:1px solid var(--border); }
+      .cmp-seg-btn.active{ background:var(--accent-soft); color:var(--accent); }
+
+      .diff-summary{
+        display:flex;
+        align-items:center;
+        gap:14px;
+        flex-wrap:wrap;
+        border:1px solid var(--border);
+        border-bottom:none;
+        border-radius:var(--radius) var(--radius) 0 0;
+        background:var(--panel-alt);
+        padding:10px 14px;
+      }
+      .diff-summary-side{ flex:1; display:flex; align-items:center; gap:8px; min-width:180px; }
+      .diff-summary-icon{
+        flex:none;
+        width:18px; height:18px;
+        border-radius:50%;
+        display:flex; align-items:center; justify-content:center;
+        font-size:0.79em; font-weight:700;
+      }
+      .diff-summary-icon.del{ color:var(--err); background:var(--err-soft); }
+      .diff-summary-icon.add{ color:var(--ok); background:var(--ok-soft); }
+      .diff-summary-label{ font-size:0.83em; font-weight:600; }
+      .diff-summary-spacer{ flex:1; }
+      .diff-summary-lines{ font-family:var(--font-mono); font-size:0.77em; color:var(--ink-muted); }
+      .diff-swap{
+        flex:none;
+        border:1px solid var(--border);
+        background:var(--panel);
+        border-radius:var(--radius-sm);
+        width:26px; height:26px;
+        cursor:pointer;
+        color:var(--ink-muted);
+      }
+      .diff-swap:hover{ color:var(--accent); border-color:var(--accent); }
+
+      .diff-view{ padding:0; overflow:hidden; overflow-x:auto; border-radius:0 0 var(--radius) var(--radius); width:100%; }
+
+      .diff-row{
+        display:flex;
+        align-items:flex-start;
+        font-family:var(--font-mono);
+        font-size:0.9em;
+        line-height:1.6;
+        white-space:pre-wrap;
+        border-bottom:1px solid var(--border);
+      }
+      .diff-row:last-child{ border-bottom:none; }
+      .diff-row.same{ background:var(--panel); }
+      .diff-row.del{ background:var(--err-soft); }
+      .diff-row.add{ background:var(--ok-soft); }
+      .diff-row .diff-gutter{
+        flex:none; width:36px; text-align:right; padding:2px 8px;
+        color:var(--ink-faint); user-select:none; border-right:1px solid var(--border);
+      }
+      .diff-row .diff-text{ flex:1; padding:2px 10px; word-break:break-word; }
+
+      .diff-split{ display:flex; flex-direction:column; width:100%; }
+      .diff-split-row{ display:flex; width:100%; }
+      .diff-split-cell{
+        flex:1 1 0; min-width:0; display:flex;
+        font-family:var(--font-mono); font-size:0.9em; line-height:1.6;
+        white-space:pre-wrap; border-bottom:1px solid var(--border);
+      }
+      .diff-split-cell:first-child{ border-right:1px solid var(--border); }
+      .diff-split-cell.same{ background:var(--panel); }
+      .diff-split-cell.del{ background:var(--err-soft); }
+      .diff-split-cell.add{ background:var(--ok-soft); }
+      .diff-split-cell.empty{ background:var(--panel-alt); }
+      .diff-split-cell .diff-gutter{
+        flex:none; width:36px; text-align:right; padding:2px 8px;
+        color:var(--ink-faint); user-select:none; border-right:1px solid var(--border);
+      }
+      .diff-split-cell .diff-text{ flex:1; padding:2px 10px; word-break:break-word; }
+
+      /* Darker highlight for the exact changed span within a modified line
+         (lighter = whole changed line, darker = exact diff). */
+      .diff-split-cell.del .diff-chunk{ background:#ffb3b3; border-radius:2px; }
+      .diff-split-cell.add .diff-chunk{ background:#7ee2a8; border-radius:2px; }
+      .diff-row.del .diff-chunk{ background:#ffb3b3; border-radius:2px; }
+      .diff-row.add .diff-chunk{ background:#7ee2a8; border-radius:2px; }
+
+      @media (max-width: 720px){
+        .diff-split-row{ flex-direction:column; }
+        .diff-split-cell:first-child{ border-right:none; border-bottom:1px solid var(--border); }
+        .diff-summary{ flex-wrap:wrap; }
+        .diff-summary-side{ min-width:100%; }
+      }
+    `);
+
     panel.innerHTML = `
       <h1 class="tool-title">Text Comparison</h1>
       <p class="tool-desc">Line-level diff with character-level highlighting. Both inputs stay in this tab.</p>
@@ -88,7 +213,6 @@ Bench.registerTool({
       return ops;
     }
 
-    // Character-level diff for highlighting the changed span within a modified line.
     function diffChars(oldLine, newLine){
       const ta = Array.from(oldLine), tb = Array.from(newLine);
       return lcsOps(ta, tb, s => s).map(op =>
@@ -119,7 +243,6 @@ Bench.registerTool({
         : { type: "add", newLine: op.b.line }
       );
 
-      // Pair consecutive del-block + add-block into "mod" rows for char-level highlighting.
       const ops = [];
       let i = 0;
       while(i < rawOps.length){
