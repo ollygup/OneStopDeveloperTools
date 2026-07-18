@@ -6,7 +6,7 @@ Bench.registerTool({
   mount(panel){
     panel.innerHTML = `
       <h1 class="tool-title">Text Comparison</h1>
-      <p class="tool-desc">Line-level diff with word-level highlighting. Both inputs stay in this tab.</p>
+      <p class="tool-desc">Line-level diff with character-level highlighting. Both inputs stay in this tab.</p>
 
       <div class="field-group">
         <label class="field-label" for="cmp-a">Original</label>
@@ -19,37 +19,54 @@ Bench.registerTool({
       </div>
 
       <div class="cmp-toolbar">
-        <button type="button" class="cmp-btn" id="cmp-swap" title="Swap original/changed">⇄ Swap</button>
-
+        <button type="button" class="cmp-btn primary" id="cmp-find">Find difference</button>
         <div class="cmp-seg" id="cmp-view-seg">
-          <button type="button" class="cmp-seg-btn active" data-view="inline">Inline</button>
-          <button type="button" class="cmp-seg-btn" data-view="split">Split</button>
+          <button type="button" class="cmp-seg-btn active" data-view="split">Split</button>
+          <button type="button" class="cmp-seg-btn" data-view="inline">Inline</button>
         </div>
-
         <button type="button" class="cmp-toggle" id="cmp-ignore-ws" data-on="false">Ignore whitespace</button>
         <button type="button" class="cmp-toggle" id="cmp-ignore-case" data-on="false">Ignore case</button>
-
-        <div class="cmp-stats" id="cmp-stats"></div>
       </div>
 
-      <label class="field-label">Diff</label>
-      <div class="diff-view" id="cmp-out"></div>
+      <div id="cmp-result" style="display:none">
+        <div class="diff-summary">
+          <div class="diff-summary-side">
+            <span class="diff-summary-icon del">−</span>
+            <span id="cmp-removals" class="diff-summary-label"></span>
+            <span class="diff-summary-spacer"></span>
+            <span id="cmp-a-lines" class="diff-summary-lines"></span>
+            <button type="button" class="copy-btn" id="cmp-copy-a">Copy</button>
+          </div>
+          <button type="button" class="diff-swap" id="cmp-swap" title="Swap original/changed">⇄</button>
+          <div class="diff-summary-side">
+            <span class="diff-summary-icon add">+</span>
+            <span id="cmp-additions" class="diff-summary-label"></span>
+            <span class="diff-summary-spacer"></span>
+            <span id="cmp-b-lines" class="diff-summary-lines"></span>
+            <button type="button" class="copy-btn" id="cmp-copy-b">Copy</button>
+          </div>
+        </div>
+        <div class="diff-view" id="cmp-out"></div>
+      </div>
     `;
 
     const aEl = panel.querySelector("#cmp-a");
     const bEl = panel.querySelector("#cmp-b");
+    const findBtn = panel.querySelector("#cmp-find");
+    const resultEl = panel.querySelector("#cmp-result");
     const outEl = panel.querySelector("#cmp-out");
-    const statsEl = panel.querySelector("#cmp-stats");
+    const removalsEl = panel.querySelector("#cmp-removals");
+    const additionsEl = panel.querySelector("#cmp-additions");
+    const aLinesEl = panel.querySelector("#cmp-a-lines");
+    const bLinesEl = panel.querySelector("#cmp-b-lines");
     const swapBtn = panel.querySelector("#cmp-swap");
     const viewSeg = panel.querySelector("#cmp-view-seg");
     const wsToggle = panel.querySelector("#cmp-ignore-ws");
     const caseToggle = panel.querySelector("#cmp-ignore-case");
+    const copyABtn = panel.querySelector("#cmp-copy-a");
+    const copyBBtn = panel.querySelector("#cmp-copy-b");
 
-    let viewMode = "inline"; // "inline" | "split"
-
-    function tokenize(str){
-      return str.match(/\s+|[^\s]+/g) || [];
-    }
+    let viewMode = "split"; // "split" | "inline"
 
     function lcsOps(a, b, keyOf){
       const n = a.length, m = b.length;
@@ -71,8 +88,9 @@ Bench.registerTool({
       return ops;
     }
 
-    function diffWords(oldLine, newLine){
-      const ta = tokenize(oldLine), tb = tokenize(newLine);
+    // Character-level diff for highlighting the changed span within a modified line.
+    function diffChars(oldLine, newLine){
+      const ta = Array.from(oldLine), tb = Array.from(newLine);
       return lcsOps(ta, tb, s => s).map(op =>
         op.type === "same" ? { type: "same", text: op.a }
         : op.type === "del" ? { type: "del", text: op.a }
@@ -101,7 +119,7 @@ Bench.registerTool({
         : { type: "add", newLine: op.b.line }
       );
 
-      // Pair consecutive del-block + add-block into "mod" rows for word-level highlighting.
+      // Pair consecutive del-block + add-block into "mod" rows for char-level highlighting.
       const ops = [];
       let i = 0;
       while(i < rawOps.length){
@@ -134,54 +152,22 @@ Bench.registerTool({
         else if(op.type === "mod"){ oldNum++; newNum++; op.oldNum = oldNum; op.newNum = newNum; added++; removed++; }
       });
 
-      return { ops, added, removed };
+      return { ops, added, removed, oldTotal: oldNum, newTotal: newNum };
     }
 
     function escapeHtml(str){
       return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
-    function renderWordDiff(oldLine, newLine){
-      const wops = diffWords(oldLine, newLine);
-      const oldHtml = wops.filter(o => o.type !== "add").map(o =>
-        o.type === "del" ? `<span class="diff-del">${escapeHtml(o.text)}</span>` : escapeHtml(o.text)
+    function renderCharDiff(oldLine, newLine){
+      const cops = diffChars(oldLine, newLine);
+      const oldHtml = cops.filter(o => o.type !== "add").map(o =>
+        o.type === "del" ? `<span class="diff-chunk">${escapeHtml(o.text)}</span>` : escapeHtml(o.text)
       ).join("");
-      const newHtml = wops.filter(o => o.type !== "del").map(o =>
-        o.type === "add" ? `<span class="diff-add">${escapeHtml(o.text)}</span>` : escapeHtml(o.text)
+      const newHtml = cops.filter(o => o.type !== "del").map(o =>
+        o.type === "add" ? `<span class="diff-chunk">${escapeHtml(o.text)}</span>` : escapeHtml(o.text)
       ).join("");
       return { oldHtml, newHtml };
-    }
-
-    function renderInline(ops){
-      return ops.map(op => {
-        if(op.type === "same"){
-          return `<div class="diff-row same">
-            <span class="diff-gutter">${op.oldNum}</span><span class="diff-gutter">${op.newNum}</span>
-            <span class="diff-text">${escapeHtml(op.oldLine)}</span>
-          </div>`;
-        }
-        if(op.type === "del"){
-          return `<div class="diff-row del">
-            <span class="diff-gutter">${op.oldNum}</span><span class="diff-gutter"></span>
-            <span class="diff-text">${escapeHtml(op.oldLine)}</span>
-          </div>`;
-        }
-        if(op.type === "add"){
-          return `<div class="diff-row add">
-            <span class="diff-gutter"></span><span class="diff-gutter">${op.newNum}</span>
-            <span class="diff-text">${escapeHtml(op.newLine)}</span>
-          </div>`;
-        }
-        const { oldHtml, newHtml } = renderWordDiff(op.oldLine, op.newLine);
-        return `<div class="diff-row del">
-            <span class="diff-gutter">${op.oldNum}</span><span class="diff-gutter"></span>
-            <span class="diff-text">${oldHtml}</span>
-          </div>
-          <div class="diff-row add">
-            <span class="diff-gutter"></span><span class="diff-gutter">${op.newNum}</span>
-            <span class="diff-text">${newHtml}</span>
-          </div>`;
-      }).join("");
     }
 
     function renderSplit(ops){
@@ -204,7 +190,7 @@ Bench.registerTool({
             <div class="diff-split-cell add"><span class="diff-gutter">${op.newNum}</span><span class="diff-text">${escapeHtml(op.newLine)}</span></div>
           </div>`;
         }
-        const { oldHtml, newHtml } = renderWordDiff(op.oldLine, op.newLine);
+        const { oldHtml, newHtml } = renderCharDiff(op.oldLine, op.newLine);
         return `<div class="diff-split-row">
           <div class="diff-split-cell del"><span class="diff-gutter">${op.oldNum}</span><span class="diff-text">${oldHtml}</span></div>
           <div class="diff-split-cell add"><span class="diff-gutter">${op.newNum}</span><span class="diff-text">${newHtml}</span></div>
@@ -212,27 +198,63 @@ Bench.registerTool({
       }).join("") + `</div>`;
     }
 
-    function render(){
+    function renderInline(ops){
+      return ops.map(op => {
+        if(op.type === "same"){
+          return `<div class="diff-row same">
+            <span class="diff-gutter">${op.oldNum}</span><span class="diff-gutter">${op.newNum}</span>
+            <span class="diff-text">${escapeHtml(op.oldLine)}</span>
+          </div>`;
+        }
+        if(op.type === "del"){
+          return `<div class="diff-row del">
+            <span class="diff-gutter">${op.oldNum}</span><span class="diff-gutter"></span>
+            <span class="diff-text">${escapeHtml(op.oldLine)}</span>
+          </div>`;
+        }
+        if(op.type === "add"){
+          return `<div class="diff-row add">
+            <span class="diff-gutter"></span><span class="diff-gutter">${op.newNum}</span>
+            <span class="diff-text">${escapeHtml(op.newLine)}</span>
+          </div>`;
+        }
+        const { oldHtml, newHtml } = renderCharDiff(op.oldLine, op.newLine);
+        return `<div class="diff-row del">
+            <span class="diff-gutter">${op.oldNum}</span><span class="diff-gutter"></span>
+            <span class="diff-text">${oldHtml}</span>
+          </div>
+          <div class="diff-row add">
+            <span class="diff-gutter"></span><span class="diff-gutter">${op.newNum}</span>
+            <span class="diff-text">${newHtml}</span>
+          </div>`;
+      }).join("");
+    }
+
+    function run(){
       const a = aEl.value, b = bEl.value;
-      if(a === "" && b === ""){ outEl.innerHTML = ""; statsEl.textContent = ""; return; }
+      if(a === "" && b === ""){ resultEl.style.display = "none"; return; }
 
       const ignoreWs = wsToggle.dataset.on === "true";
       const ignoreCase = caseToggle.dataset.on === "true";
 
-      const { ops, added, removed } = diffLines(a, b, ignoreWs, ignoreCase);
+      const { ops, added, removed, oldTotal, newTotal } = diffLines(a, b, ignoreWs, ignoreCase);
+
+      removalsEl.textContent = `${removed} removal${removed === 1 ? "" : "s"}`;
+      additionsEl.textContent = `${added} addition${added === 1 ? "" : "s"}`;
+      aLinesEl.textContent = `${oldTotal} lines`;
+      bLinesEl.textContent = `${newTotal} lines`;
 
       outEl.innerHTML = viewMode === "split" ? renderSplit(ops) : renderInline(ops);
-      statsEl.innerHTML = `<span class="stat-add">+${added}</span><span class="stat-del">-${removed}</span>`;
+      resultEl.style.display = "block";
     }
 
-    aEl.addEventListener("input", render);
-    bEl.addEventListener("input", render);
+    findBtn.addEventListener("click", run);
 
     swapBtn.addEventListener("click", () => {
       const tmp = aEl.value;
       aEl.value = bEl.value;
       bEl.value = tmp;
-      render();
+      run();
     });
 
     viewSeg.querySelectorAll(".cmp-seg-btn").forEach(btn => {
@@ -240,7 +262,7 @@ Bench.registerTool({
         viewSeg.querySelectorAll(".cmp-seg-btn").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
         viewMode = btn.dataset.view;
-        render();
+        if(resultEl.style.display !== "none") run();
       });
     });
 
@@ -249,8 +271,11 @@ Bench.registerTool({
         const on = btn.dataset.on === "true";
         btn.dataset.on = on ? "false" : "true";
         btn.classList.toggle("active", !on);
-        render();
+        if(resultEl.style.display !== "none") run();
       });
     });
+
+    Bench.wireCopyButton(copyABtn, () => aEl.value);
+    Bench.wireCopyButton(copyBBtn, () => bEl.value);
   }
 });
