@@ -20,7 +20,7 @@
       const header = document.createElement("button");
       header.className = "acc-header";
       header.type = "button";
-      header.innerHTML = `<span>${section.label}</span><span class="chevron">▸</span>`;
+      header.innerHTML = `<span>${section.label}</span><span class="chevron" aria-hidden="true"></span>`;
       header.addEventListener("click", () => {
         sectionEl.classList.toggle("open");
       });
