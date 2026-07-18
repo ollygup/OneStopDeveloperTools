@@ -5,6 +5,22 @@ Bench.registerTool({
   label: "Text Comparison",
   mount(panel){
     Bench.injectStyle("compare", `
+      .cmp-inputs{
+        display:flex;
+        flex-direction:row;
+        gap:14px;
+        margin-bottom:18px;
+      }
+      .cmp-inputs .field-group{ flex:1; min-width:0; margin-bottom:0; }
+      .cmp-inputs textarea{
+        width:100%;
+        height:max(160px, 50vh);
+        resize:vertical;
+      }
+      
+      @media (max-width: 720px){
+        .cmp-inputs{ flex-direction:column; }
+      }
       .cmp-toolbar{
         display:flex;
         flex-wrap:wrap;
