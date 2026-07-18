@@ -1,0 +1,12 @@
+<!-- logo.svg -->
+<svg width="180" height="32" viewBox="0 0 180 32" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="mark" viewBox="0 0 32 32">
+    <rect width="32" height="32" rx="7" fill="#18181B"/>
+    <rect x="7" y="7" width="8" height="8" rx="1.5" fill="#2563EB"/>
+    <rect x="17" y="7" width="8" height="8" rx="1.5" fill="#FAFAFA" fill-opacity="0.9"/>
+    <rect x="7" y="17" width="8" height="8" rx="1.5" fill="#FAFAFA" fill-opacity="0.9"/>
+    <rect x="17" y="17" width="8" height="8" rx="1.5" fill="#2563EB"/>
+  </symbol>
+  <use href="#mark" width="32" height="32"/>
+  <text x="42" y="21" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="15" font-weight="600" letter-spacing="-0.2" fill="#18181B">Bench</text>
+</svg>
