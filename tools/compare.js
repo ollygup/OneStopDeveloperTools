@@ -155,14 +155,16 @@ Bench.registerTool({
       <h1 class="tool-title">Text Comparison</h1>
       <p class="tool-desc">Line-level diff with character-level highlighting. Both inputs stay in this tab.</p>
 
-      <div class="field-group">
-        <label class="field-label" for="cmp-a">Original</label>
-        <textarea id="cmp-a" rows="8" placeholder="Paste original text..."></textarea>
-      </div>
-
-      <div class="field-group">
-        <label class="field-label" for="cmp-b">Changed</label>
-        <textarea id="cmp-b" rows="8" placeholder="Paste changed text..."></textarea>
+      <div class="cmp-inputs">
+        <div class="field-group">
+          <label class="field-label" for="cmp-a">Original</label>
+          <textarea id="cmp-a" rows="8" placeholder="Paste original text..."></textarea>
+        </div>
+      
+        <div class="field-group">
+          <label class="field-label" for="cmp-b">Changed</label>
+          <textarea id="cmp-b" rows="8" placeholder="Paste changed text..."></textarea>
+        </div>
       </div>
 
       <div class="cmp-toolbar">
