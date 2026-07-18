@@ -22,7 +22,11 @@
       header.type = "button";
       header.innerHTML = `<span>${section.label}</span><span class="chevron" aria-hidden="true"></span>`;
       header.addEventListener("click", () => {
-        sectionEl.classList.toggle("open");
+        const isOpen = sectionEl.classList.contains("open");
+        accordionEl.querySelectorAll(".acc-section.open").forEach(el => {
+          if(el !== sectionEl) el.classList.remove("open");
+        });
+        sectionEl.classList.toggle("open", !isOpen);
       });
 
       const body = document.createElement("div");
