@@ -1,19 +1,19 @@
 /* style.css — SHARED ONLY: design tokens, layout shell, generic form controls.
    No tool-specific component styles live here anymore. */
 :root{
-  --bg:#FAFAFA;
-  --panel:#FFFFFF;
-  --panel-alt:#F4F4F5;
-  --border:#E4E4E7;
-  --ink:#18181B;
-  --ink-muted:#71717A;
-  --ink-faint:#A1A1AA;
-  --accent:#2563EB;
-  --accent-soft:#EFF4FF;
-  --ok:#1A7F37;
-  --ok-soft:#DAFBE1;
-  --err:#CF222E;
-  --err-soft:#FFEBE9;
+  --bg:#EFF3F2;
+  --panel:#F8FAF9;
+  --panel-alt:#E7EEEC;
+  --border:#D6E0DD;
+  --ink:#263238;
+  --ink-muted:#5C6B73;
+  --ink-faint:#90A4AE;
+  --accent:#3D8B85;
+  --accent-soft:#DFEEEC;
+  --ok:#2E7D5B;
+  --ok-soft:#E1F1E8;
+  --err:#B15558;
+  --err-soft:#F6E5E5;
 
   --radius-sm:6px;
   --radius:8px;
