@@ -1,5 +1,5 @@
-/* Bench — neutral zinc palette + single blue accent (shadcn/ui tokens),
-   GitHub diff colors for the compare tool. No decorative textures. */
+/* style.css — SHARED ONLY: design tokens, layout shell, generic form controls.
+   No tool-specific component styles live here anymore. */
 :root{
   --bg:#FAFAFA;
   --panel:#FFFFFF;
@@ -27,14 +27,17 @@
 
 *{box-sizing:border-box;}
 html,body{height:100%;}
-html{ font-size:15px; }
+
+/* Fluid typography: scales continuously with viewport width instead of jumping
+   between fixed breakpoint values. ~13px on a phone up to ~18px on a huge display. */
+html{ font-size:clamp(13px, 12px + 0.22vw, 18px); }
 
 body{
   margin:0;
   background:var(--bg);
   color:var(--ink);
   font-family:var(--font-ui);
-  font-size:14px;
+  font-size:1em;
   line-height:1.5;
   -webkit-font-smoothing:antialiased;
 }
@@ -82,7 +85,7 @@ body{
 .menu-toggle[aria-expanded="true"] .menu-toggle-bar:nth-child(2){ opacity:0; }
 .menu-toggle[aria-expanded="true"] .menu-toggle-bar:nth-child(3){ transform:translateY(-5.5px) rotate(-45deg); }
 
-.topbar-brand{ display:flex; align-items:center; gap:7px; font-weight:600; font-size:14px; }
+.topbar-brand{ display:flex; align-items:center; gap:7px; font-weight:600; font-size:1em; }
 .topbar-net{ margin-left:auto; }
 
 .backdrop{
@@ -104,14 +107,14 @@ body{
 }
 
 .brand{ display:flex; align-items:center; gap:8px; margin-bottom:18px; }
-.brand-mark{ color:var(--accent); font-size:15px; }
-.brand-name{ font-weight:600; font-size:14.5px; }
+.brand-mark{ color:var(--accent); font-size:1em; }
+.brand-name{ font-weight:600; font-size:0.97em; }
 
 .net-indicator{
   display:flex;
   align-items:center;
   gap:7px;
-  font-size:12px;
+  font-size:0.8em;
   color:var(--ink-muted);
   padding:0 2px;
   margin-bottom:18px;
@@ -136,7 +139,7 @@ body{
   background:none;
   border:none;
   padding:10px 4px;
-  font-size:11.5px;
+  font-size:0.77em;
   font-weight:600;
   letter-spacing:0.03em;
   text-transform:uppercase;
@@ -144,7 +147,7 @@ body{
   cursor:pointer;
 }
 .acc-header:hover{ color:var(--ink); }
-.acc-header .chevron{ transition:transform .15s ease; font-size:10px; color:var(--ink-faint); }
+.acc-header .chevron{ transition:transform .15s ease; font-size:0.67em; color:var(--ink-faint); }
 .acc-section.open .acc-header .chevron{ transform:rotate(90deg); }
 
 .acc-body{ display:none; padding:2px 0 10px; }
@@ -158,7 +161,7 @@ body{
   border:none;
   padding:7px 10px;
   border-radius:var(--radius-sm);
-  font-size:13px;
+  font-size:0.87em;
   color:var(--ink);
   cursor:pointer;
   margin-bottom:1px;
@@ -166,24 +169,27 @@ body{
 .tool-link:hover{ background:var(--panel-alt); }
 .tool-link.active{ background:var(--accent-soft); color:var(--accent); font-weight:600; }
 
-.sidebar-foot{ padding-top:14px; font-size:11px; color:var(--ink-faint); }
+.sidebar-foot{ padding-top:14px; font-size:0.73em; color:var(--ink-faint); }
 
 /* ---------- Content ---------- */
-.content{ flex:1; min-width:0; padding:36px 40px; overflow-y:auto; }
+.content{ flex:1; min-width:0; padding:36px clamp(16px, 3vw, 76px); overflow-y:auto; }
 
 .empty-state{ max-width:420px; margin-top:80px; }
-.empty-title{ font-size:18px; font-weight:600; margin:0 0 6px; }
-.empty-sub{ color:var(--ink-muted); margin:0; line-height:1.55; font-size:13.5px; }
+.empty-title{ font-size:1.2em; font-weight:600; margin:0 0 6px; }
+.empty-sub{ color:var(--ink-muted); margin:0; line-height:1.55; font-size:0.9em; }
 
-.tool-panel{ display:none; max-width:760px; }
+/* Tool panels take the full width the content column allows — no fixed cap,
+   so wide widgets (like a diff table) can actually use the screen. */
+.tool-panel{ display:none; width:100%; max-width:1400px; }
 .tool-panel.active{ display:block; }
 
-.tool-title{ font-size:19px; font-weight:600; margin:0 0 4px; letter-spacing:-0.01em; }
-.tool-desc{ color:var(--ink-muted); margin:0 0 24px; font-size:13px; max-width:56ch; }
+.tool-title{ font-size:1.27em; font-weight:600; margin:0 0 4px; letter-spacing:-0.01em; }
+.tool-desc{ color:var(--ink-muted); margin:0 0 24px; font-size:0.87em; max-width:60ch; }
 
+/* ---------- Generic form controls (used by multiple tools) ---------- */
 .field-label{
   display:block;
-  font-size:11.5px;
+  font-size:0.77em;
   font-weight:600;
   color:var(--ink-muted);
   text-transform:uppercase;
@@ -194,7 +200,7 @@ body{
 textarea, input[type="text"]{
   width:100%;
   font-family:var(--font-mono);
-  font-size:13px;
+  font-size:0.87em;
   color:var(--ink);
   background:var(--panel);
   border:1px solid var(--border);
@@ -211,24 +217,13 @@ textarea:focus, input[type="text"]:focus{
 
 .field-group{ margin-bottom:18px; }
 
-.output-row{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  background:var(--panel-alt);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:9px 12px;
-  margin-bottom:8px;
-}
-.output-label{ flex:none; width:82px; font-family:var(--font-mono); font-size:11.5px; color:var(--ink-muted); }
-.output-value{ flex:1; font-family:var(--font-mono); font-size:12.5px; word-break:break-all; }
+/* Shared copy-button component (Bench.wireCopyButton), reused across tools. */
 .copy-btn{
   flex:none;
   border:1px solid var(--border);
   background:var(--panel);
   border-radius:var(--radius-sm);
-  font-size:11px;
+  font-size:0.73em;
   font-weight:500;
   padding:4px 9px;
   cursor:pointer;
@@ -237,164 +232,7 @@ textarea:focus, input[type="text"]:focus{
 .copy-btn:hover{ color:var(--accent); border-color:var(--accent); }
 .copy-btn.copied{ color:var(--ok); border-color:var(--ok); }
 
-.diff-view{
-  font-family:var(--font-mono);
-  font-size:12.5px;
-  white-space:pre-wrap;
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:12px;
-  background:var(--panel);
-  line-height:1.6;
-}
-.diff-add{ background:var(--ok-soft); color:#116329; }
-.diff-del{ background:var(--err-soft); color:#82071E; text-decoration:line-through; }
-
-.badge{
-  display:inline-block;
-  font-size:11px;
-  font-family:var(--font-mono);
-  padding:2px 7px;
-  border-radius:4px;
-  background:var(--accent-soft);
-  color:var(--accent);
-  margin-right:6px;
-}
-.badge.err{ background:var(--err-soft); color:var(--err); }
-
-.jwt-part{ margin-bottom:16px; }
-.jwt-part pre{
-  font-family:var(--font-mono);
-  font-size:12.5px;
-  background:var(--panel-alt);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:12px;
-  margin:6px 0 0;
-  overflow-x:auto;
-}
-
-.cmp-toolbar{
-  display:flex;
-  flex-wrap:wrap;
-  align-items:center;
-  gap:8px;
-  margin-bottom:18px;
-}
-.cmp-btn, .cmp-toggle{
-  border:1px solid var(--border);
-  background:var(--panel);
-  border-radius:var(--radius-sm);
-  font-size:12px;
-  font-weight:500;
-  padding:6px 10px;
-  cursor:pointer;
-  color:var(--ink-muted);
-}
-.cmp-btn:hover{ color:var(--accent); border-color:var(--accent); }
-.cmp-btn.primary{ background:var(--ink); color:#fff; border-color:var(--ink); }
-.cmp-btn.primary:hover{ opacity:0.9; color:#fff; }
-.cmp-toggle.active{ color:var(--accent); border-color:var(--accent); background:var(--accent-soft); }
-
-.cmp-seg{ display:flex; border:1px solid var(--border); border-radius:var(--radius-sm); overflow:hidden; }
-.cmp-seg-btn{
-  border:none;
-  background:var(--panel);
-  font-size:12px;
-  font-weight:500;
-  padding:6px 12px;
-  cursor:pointer;
-  color:var(--ink-muted);
-}
-.cmp-seg-btn + .cmp-seg-btn{ border-left:1px solid var(--border); }
-.cmp-seg-btn.active{ background:var(--accent-soft); color:var(--accent); }
-
-.diff-summary{
-  display:flex;
-  align-items:center;
-  gap:14px;
-  border:1px solid var(--border);
-  border-bottom:none;
-  border-radius:var(--radius) var(--radius) 0 0;
-  background:var(--panel-alt);
-  padding:10px 14px;
-}
-.diff-summary-side{ flex:1; display:flex; align-items:center; gap:8px; min-width:0; }
-.diff-summary-icon{
-  flex:none;
-  width:18px; height:18px;
-  border-radius:50%;
-  display:flex; align-items:center; justify-content:center;
-  font-size:12px; font-weight:700;
-}
-.diff-summary-icon.del{ color:var(--err); background:var(--err-soft); }
-.diff-summary-icon.add{ color:var(--ok); background:var(--ok-soft); }
-.diff-summary-label{ font-size:12.5px; font-weight:600; }
-.diff-summary-spacer{ flex:1; }
-.diff-summary-lines{ font-family:var(--font-mono); font-size:11.5px; color:var(--ink-muted); }
-.diff-swap{
-  flex:none;
-  border:1px solid var(--border);
-  background:var(--panel);
-  border-radius:var(--radius-sm);
-  width:26px; height:26px;
-  cursor:pointer;
-  color:var(--ink-muted);
-}
-.diff-swap:hover{ color:var(--accent); border-color:var(--accent); }
-
-.diff-view{ padding:0; overflow:hidden; border-radius:0 0 var(--radius) var(--radius); }
-
-.diff-row{
-  display:flex;
-  align-items:flex-start;
-  font-family:var(--font-mono);
-  font-size:12.5px;
-  line-height:1.6;
-  white-space:pre-wrap;
-  border-bottom:1px solid var(--border);
-}
-.diff-row:last-child{ border-bottom:none; }
-.diff-row.same{ background:var(--panel); }
-.diff-row.del{ background:var(--err-soft); }
-.diff-row.add{ background:var(--ok-soft); }
-.diff-row .diff-gutter{
-  flex:none; width:36px; text-align:right; padding:2px 8px;
-  color:var(--ink-faint); user-select:none; border-right:1px solid var(--border);
-}
-.diff-row .diff-text{ flex:1; padding:2px 10px; word-break:break-word; }
-
-.diff-split{ display:flex; flex-direction:column; }
-.diff-split-row{ display:flex; }
-.diff-split-cell{
-  flex:1; min-width:0; display:flex;
-  font-family:var(--font-mono); font-size:12.5px; line-height:1.6;
-  white-space:pre-wrap; border-bottom:1px solid var(--border);
-}
-.diff-split-cell:first-child{ border-right:1px solid var(--border); }
-.diff-split-cell.same{ background:var(--panel); }
-.diff-split-cell.del{ background:var(--err-soft); }
-.diff-split-cell.add{ background:var(--ok-soft); }
-.diff-split-cell.empty{ background:var(--panel-alt); }
-.diff-split-cell .diff-gutter{
-  flex:none; width:36px; text-align:right; padding:2px 8px;
-  color:var(--ink-faint); user-select:none; border-right:1px solid var(--border);
-}
-.diff-split-cell .diff-text{ flex:1; padding:2px 10px; word-break:break-word; }
-
-/* Darker highlight for the exact changed span within a modified line (lighter = whole line, darker = exact diff). */
-.diff-split-cell.del .diff-chunk{ background:#ffb3b3; border-radius:2px; }
-.diff-split-cell.add .diff-chunk{ background:#7ee2a8; border-radius:2px; }
-.diff-row.del .diff-chunk{ background:#ffb3b3; border-radius:2px; }
-.diff-row.add .diff-chunk{ background:#7ee2a8; border-radius:2px; }
-
-@media (max-width: 720px){
-  .diff-split-row{ flex-direction:column; }
-  .diff-split-cell:first-child{ border-right:none; border-bottom:1px solid var(--border); }
-  .diff-summary{ flex-wrap:wrap; }
-}
-
-/* ---------- Responsive: phone / tablet / 1080 / 2160 ---------- */
+/* ---------- Responsive: phone / tablet ---------- */
 @media (max-width: 1023px) and (min-width: 721px){
   :root{ --sidebar-w:224px; }
   .content{ padding:28px 30px; }
@@ -421,25 +259,13 @@ textarea:focus, input[type="text"]:focus{
   .sidebar .brand{ display:none; }
 
   .content{ padding:20px 16px 36px; }
-  .tool-panel{ max-width:100%; }
-  .output-label{ width:64px; }
 }
 
 @media (max-width: 380px){
   .content{ padding:16px 14px 28px; }
-  .output-row{ flex-wrap:wrap; }
-  .copy-btn{ margin-left:auto; }
-}
-
-@media (min-width: 1280px){
-  .content{ padding:44px 52px; }
-  .tool-panel{ max-width:800px; }
 }
 
 @media (min-width: 2400px){
-  html{ font-size:18px; }
   :root{ --sidebar-w:300px; }
-  .content{ padding:60px 76px; }
-  .tool-panel{ max-width:900px; }
   .sidebar{ padding:26px 20px; }
 }
