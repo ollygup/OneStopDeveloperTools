@@ -1,8 +1,29 @@
+// tools/hashing.js — component + its own scoped CSS
 Bench.registerTool({
   id: "hashing",
   section: "hashing",
   label: "Hash Generator",
   mount(panel){
+    Bench.injectStyle("hashing", `
+      .output-row{
+        display:flex;
+        align-items:center;
+        gap:8px;
+        background:var(--panel-alt);
+        border:1px solid var(--border);
+        border-radius:var(--radius);
+        padding:9px 12px;
+        margin-bottom:8px;
+        flex-wrap:wrap;
+      }
+      .output-label{ flex:none; width:82px; font-family:var(--font-mono); font-size:0.82em; color:var(--ink-muted); }
+      .output-value{ flex:1; min-width:0; font-family:var(--font-mono); font-size:0.9em; word-break:break-all; }
+
+      @media (max-width: 380px){
+        .output-row .copy-btn{ margin-left:auto; }
+      }
+    `);
+
     panel.innerHTML = `
       <h1 class="tool-title">Hash Generator</h1>
       <p class="tool-desc">MD5, SHA-1, SHA-256, SHA-384, SHA-512. Computed in this tab — nothing is sent anywhere.</p>
