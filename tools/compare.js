@@ -1,3 +1,4 @@
+// tools/compare.js
 Bench.registerTool({
   id: "text-compare",
   section: "text",
@@ -7,18 +8,20 @@ Bench.registerTool({
       <h1 class="tool-title">Text Comparison</h1>
       <p class="tool-desc">Word-level diff. Both inputs stay in this tab.</p>
 
-      <div class="field-group">
-        <label class="field-label" for="cmp-a">Original</label>
-        <textarea id="cmp-a" rows="8" placeholder="Paste original text..."></textarea>
+      <div class="cmp-grid">
+        <div class="cmp-col">
+          <label class="field-label" for="cmp-a">Original</label>
+          <textarea id="cmp-a" placeholder="Paste original text..."></textarea>
+        </div>
+        <div class="cmp-col">
+          <label class="field-label" for="cmp-b">Changed</label>
+          <textarea id="cmp-b" placeholder="Paste changed text..."></textarea>
+        </div>
+        <div class="cmp-col">
+          <label class="field-label">Diff</label>
+          <div class="diff-view" id="cmp-out"></div>
+        </div>
       </div>
-
-      <div class="field-group">
-        <label class="field-label" for="cmp-b">Changed</label>
-        <textarea id="cmp-b" rows="8" placeholder="Paste changed text..."></textarea>
-      </div>
-
-      <label class="field-label">Diff</label>
-      <div class="diff-view" id="cmp-out"></div>
     `;
 
     const aEl = panel.querySelector("#cmp-a");
