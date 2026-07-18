@@ -4,13 +4,30 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; frame-src 'none'; object-src 'none'">
-<title>One-Stop Dev Tools</title>
+<title>Bench — local dev tools</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="shell">
 
-  <aside class="sidebar">
+  <header class="topbar">
+    <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Open tools menu" aria-expanded="false" aria-controls="sidebar">
+      <span class="menu-toggle-bar"></span>
+      <span class="menu-toggle-bar"></span>
+      <span class="menu-toggle-bar"></span>
+    </button>
+    <div class="topbar-brand">
+      <span class="brand-mark">▣</span>
+      <span>One-Stop Developer Tools</span>
+    </div>
+    <div class="topbar-net" title="No requests ever leave this page">
+      <span class="net-dot"></span>
+    </div>
+  </header>
+
+  <div class="backdrop" id="backdrop"></div>
+
+  <aside class="sidebar" id="sidebar">
     <div class="brand">
       <span class="brand-mark">▣</span>
       <span class="brand-name">Toolbox</span>
@@ -18,20 +35,20 @@
 
     <div class="net-indicator" title="No requests ever leave this page">
       <span class="net-dot"></span>
-      <span>Most goated HTML CSS JS ever.</span>
+      <span>Questo è il miglior HTML, CSS e JS di tutti i tempi.</span>
     </div>
 
     <nav class="accordion" id="accordion"></nav>
 
     <div class="sidebar-foot">
-      <span>Consider yourself lucky because this runs locally.</span>
+      <span>Be grateful it runs locally.</span>
     </div>
   </aside>
 
   <main class="content" id="content">
     <div class="empty-state" id="empty-state">
       <p class="empty-title">Select a tool</p>
-      <p class="empty-sub">If you click on a tool, it will open the tool ..</p>
+      <p class="empty-sub">Just in case you are unaware, clicking on a tool will, in fact, open the tool you clicked.</p>
     </div>
   </main>
 
