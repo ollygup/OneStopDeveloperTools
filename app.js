@@ -1,0 +1,95 @@
+(function(){
+  const accordionEl = document.getElementById("accordion");
+  const contentEl = document.getElementById("content");
+  const emptyStateEl = document.getElementById("empty-state");
+
+  const mountedPanels = {}; // toolId -> panel element (kept alive so in-session input survives switching)
+  let activeToolId = null;
+
+  function buildSidebar(){
+    Bench.sections.forEach(section => {
+      const sectionTools = Bench.tools.filter(t => t.section === section.id);
+      if(sectionTools.length === 0) return;
+
+      const sectionEl = document.createElement("div");
+      sectionEl.className = "acc-section";
+
+      const header = document.createElement("button");
+      header.className = "acc-header";
+      header.type = "button";
+      header.innerHTML = `<span>${section.label}</span><span class="chevron">▸</span>`;
+      header.addEventListener("click", () => {
+        sectionEl.classList.toggle("open");
+      });
+
+      const body = document.createElement("div");
+      body.className = "acc-body";
+
+      sectionTools.forEach(tool => {
+        const link = document.createElement("button");
+        link.type = "button";
+        link.className = "tool-link";
+        link.textContent = tool.label;
+        link.dataset.toolId = tool.id;
+        link.addEventListener("click", () => selectTool(tool.id));
+        body.appendChild(link);
+      });
+
+      sectionEl.appendChild(header);
+      sectionEl.appendChild(body);
+      accordionEl.appendChild(sectionEl);
+    });
+
+    // Open the first section with tools by default.
+    const firstOpen = accordionEl.querySelector(".acc-section");
+    if(firstOpen) firstOpen.classList.add("open");
+  }
+
+  function selectTool(toolId){
+    if(activeToolId === toolId) return;
+
+    if(emptyStateEl) emptyStateEl.style.display = "none";
+
+    // Deactivate current panel + nav link.
+    if(activeToolId && mountedPanels[activeToolId]){
+      mountedPanels[activeToolId].classList.remove("active");
+    }
+    document.querySelectorAll(".tool-link.active").forEach(el => el.classList.remove("active"));
+
+    // Mount lazily on first visit.
+    if(!mountedPanels[toolId]){
+      const tool = Bench.tools.find(t => t.id === toolId);
+      if(!tool) return;
+
+      const panel = document.createElement("div");
+      panel.className = "tool-panel";
+      panel.id = `panel-${toolId}`;
+      contentEl.appendChild(panel);
+      tool.mount(panel);
+      mountedPanels[toolId] = panel;
+    }
+
+    mountedPanels[toolId].classList.add("active");
+    const link = document.querySelector(`.tool-link[data-tool-id="${toolId}"]`);
+    if(link) link.classList.add("active");
+
+    activeToolId = toolId;
+  }
+
+  // Small shared helper other tool files can use for copy-to-clipboard buttons.
+  Bench.wireCopyButton = function(button, getText){
+    button.addEventListener("click", () => {
+      const text = getText();
+      navigator.clipboard.writeText(text).then(() => {
+        button.textContent = "Copied";
+        button.classList.add("copied");
+        setTimeout(() => {
+          button.textContent = "Copy";
+          button.classList.remove("copied");
+        }, 1200);
+      });
+    });
+  };
+
+  document.addEventListener("DOMContentLoaded", buildSidebar);
+})();

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; frame-src 'none'; object-src 'none'">
+<title>Bench — local dev tools</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="shell">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">▣</span>
+      <span class="brand-name">Bench</span>
+    </div>
+
+    <div class="net-indicator" title="No requests ever leave this page">
+      <span class="net-dot"></span>
+      <span>Runs locally · zero network calls</span>
+    </div>
+
+    <nav class="accordion" id="accordion"></nav>
+
+    <div class="sidebar-foot">
+      <span>No data stored. No data sent. Ever.</span>
+    </div>
+  </aside>
+
+  <main class="content" id="content">
+    <div class="empty-state" id="empty-state">
+      <p class="empty-title">Select a tool</p>
+      <p class="empty-sub">Everything runs in this tab. Nothing you paste here ever leaves it.</p>
+    </div>
+  </main>
+
+</div>
+
+<script src="js/registry.js"></script>
+<script src="js/vendor-md5.js"></script>
+<script src="tools/hashing.js"></script>
+<script src="tools/jwt.js"></script>
+<script src="tools/compare.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
