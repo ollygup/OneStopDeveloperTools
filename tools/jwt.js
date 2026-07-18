@@ -1,8 +1,35 @@
+// tools/jwt.js — component + its own scoped CSS
 Bench.registerTool({
   id: "jwt-decoder",
   section: "jwt",
   label: "JWT Decoder",
   mount(panel){
+    Bench.injectStyle("jwt", `
+      .jwt-part{ margin-bottom:16px; }
+      .jwt-part pre{
+        font-family:var(--font-mono);
+        font-size:0.9em;
+        background:var(--panel-alt);
+        border:1px solid var(--border);
+        border-radius:var(--radius);
+        padding:12px;
+        margin:6px 0 0;
+        overflow-x:auto;
+      }
+
+      .badge{
+        display:inline-block;
+        font-size:0.79em;
+        font-family:var(--font-mono);
+        padding:2px 7px;
+        border-radius:4px;
+        background:var(--accent-soft);
+        color:var(--accent);
+        margin-right:6px;
+      }
+      .badge.err{ background:var(--err-soft); color:var(--err); }
+    `);
+
     panel.innerHTML = `
       <h1 class="tool-title">JWT Decoder</h1>
       <p class="tool-desc">Decodes header and payload only. This does not verify signatures, so it never needs your signing key.</p>
