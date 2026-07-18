@@ -2,11 +2,20 @@
   const accordionEl = document.getElementById("accordion");
   const contentEl = document.getElementById("content");
   const emptyStateEl = document.getElementById("empty-state");
+  const sidebarEl = document.getElementById("sidebar");
+  const backdropEl = document.getElementById("backdrop");
+  const menuToggleEl = document.getElementById("menu-toggle");
 
   const mountedPanels = {}; // toolId -> panel element (kept alive so in-session input survives switching)
   let activeToolId = null;
 
+  function sectionPrefix(sectionId){
+    return sectionId.slice(0, 3).toUpperCase();
+  }
+
   function buildSidebar(){
+    const sectionCounters = {};
+
     Bench.sections.forEach(section => {
       const sectionTools = Bench.tools.filter(t => t.section === section.id);
       if(sectionTools.length === 0) return;
@@ -26,6 +35,9 @@
       body.className = "acc-body";
 
       sectionTools.forEach(tool => {
+        sectionCounters[section.id] = (sectionCounters[section.id] || 0) + 1;
+        tool._specCode = `${sectionPrefix(section.id)}·${String(sectionCounters[section.id]).padStart(2, "0")}`;
+
         const link = document.createElement("button");
         link.type = "button";
         link.className = "tool-link";
@@ -46,34 +58,68 @@
   }
 
   function selectTool(toolId){
-    if(activeToolId === toolId) return;
+    if(activeToolId !== toolId){
+      if(emptyStateEl) emptyStateEl.style.display = "none";
 
-    if(emptyStateEl) emptyStateEl.style.display = "none";
+      // Deactivate current panel + nav link.
+      if(activeToolId && mountedPanels[activeToolId]){
+        mountedPanels[activeToolId].classList.remove("active");
+      }
+      document.querySelectorAll(".tool-link.active").forEach(el => el.classList.remove("active"));
 
-    // Deactivate current panel + nav link.
-    if(activeToolId && mountedPanels[activeToolId]){
-      mountedPanels[activeToolId].classList.remove("active");
+      // Mount lazily on first visit.
+      if(!mountedPanels[toolId]){
+        const tool = Bench.tools.find(t => t.id === toolId);
+        if(!tool) return;
+
+        const panel = document.createElement("div");
+        panel.className = "tool-panel";
+        panel.id = `panel-${toolId}`;
+        contentEl.appendChild(panel);
+        tool.mount(panel);
+
+        const titleEl = panel.querySelector(".tool-title");
+        if(titleEl && tool._specCode){
+          const plate = document.createElement("span");
+          plate.className = "spec-plate";
+          plate.textContent = tool._specCode;
+          titleEl.appendChild(plate);
+        }
+
+        mountedPanels[toolId] = panel;
+      }
+
+      mountedPanels[toolId].classList.add("active");
+      const link = document.querySelector(`.tool-link[data-tool-id="${toolId}"]`);
+      if(link) link.classList.add("active");
+
+      activeToolId = toolId;
     }
-    document.querySelectorAll(".tool-link.active").forEach(el => el.classList.remove("active"));
 
-    // Mount lazily on first visit.
-    if(!mountedPanels[toolId]){
-      const tool = Bench.tools.find(t => t.id === toolId);
-      if(!tool) return;
+    closeMobileNav();
+  }
 
-      const panel = document.createElement("div");
-      panel.className = "tool-panel";
-      panel.id = `panel-${toolId}`;
-      contentEl.appendChild(panel);
-      tool.mount(panel);
-      mountedPanels[toolId] = panel;
-    }
+  // ---------- Mobile off-canvas nav ----------
+  function openMobileNav(){
+    sidebarEl.classList.add("open");
+    backdropEl.classList.add("show");
+    menuToggleEl.setAttribute("aria-expanded", "true");
+  }
+  function closeMobileNav(){
+    sidebarEl.classList.remove("open");
+    backdropEl.classList.remove("show");
+    menuToggleEl.setAttribute("aria-expanded", "false");
+  }
+  function toggleMobileNav(){
+    sidebarEl.classList.contains("open") ? closeMobileNav() : openMobileNav();
+  }
 
-    mountedPanels[toolId].classList.add("active");
-    const link = document.querySelector(`.tool-link[data-tool-id="${toolId}"]`);
-    if(link) link.classList.add("active");
-
-    activeToolId = toolId;
+  if(menuToggleEl){
+    menuToggleEl.addEventListener("click", toggleMobileNav);
+    backdropEl.addEventListener("click", closeMobileNav);
+    document.addEventListener("keydown", e => {
+      if(e.key === "Escape") closeMobileNav();
+    });
   }
 
   // Small shared helper other tool files can use for copy-to-clipboard buttons.
