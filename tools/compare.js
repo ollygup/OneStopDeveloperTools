@@ -75,7 +75,13 @@ Bench.registerTool({
       }
       .diff-swap:hover{ color:var(--accent); border-color:var(--accent); }
 
-      .diff-view{ padding:0; overflow:hidden; overflow-x:auto; border-radius:0 0 var(--radius) var(--radius); width:100%; }
+      .diff-view{
+        padding:0;
+        overflow:hidden;
+        overflow-x:auto;
+        border-radius:0 0 var(--radius) var(--radius);
+        width:100%;
+      }
 
       .diff-row{
         display:flex;
