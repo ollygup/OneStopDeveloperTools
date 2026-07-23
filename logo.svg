@@ -1,17 +1,14 @@
-<svg viewBox="130 130 140 140" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="120 120 130 130" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <style>
-      .bg { fill: white; }
-      .mark { fill: none; stroke: #4C3FB5; stroke-width: 8; stroke-linecap: round; stroke-linejoin: round; }
+      .o-stroke { fill: none; stroke: #1a1a1a; stroke-width: 28; stroke-linecap: round; stroke-linejoin: round; }
+      .s-fill { fill: #1a1a1a; }
     </style>
   </defs>
   
-  <rect class="bg" width="400" height="400"/>
+  <!-- O circle -->
+  <circle cx="200" cy="200" r="85" class="o-stroke"/>
   
-  <g transform="translate(200, 200)">
-    <circle class="mark" cx="0" cy="0" r="60"/>
-    <line class="mark" x1="-25" y1="-15" x2="25" y2="-15"/>
-    <line class="mark" x1="-25" y1="5" x2="25" y2="5"/>
-    <line class="mark" x1="-25" y1="25" x2="15" y2="25"/>
-  </g>
+  <!-- S curve inside -->
+  <path d="M 200 150 Q 230 150 230 175 Q 230 200 200 200 Q 170 200 170 225 Q 170 250 200 250" class="s-fill" fill="none" stroke="#6366f1" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
