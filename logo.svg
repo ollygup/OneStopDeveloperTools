@@ -1,28 +1,27 @@
-<svg viewBox="110 90 180 220" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <style>
-      .node { fill: #2c3e50; }
-      .line { stroke: #2c3e50; stroke-width: 2; fill: none; }
-      .center { fill: #3498db; }
+      .primary { fill: #1a1a2e; }
+      .accent { fill: #00d4ff; }
+      .light { fill: #f0f0f0; }
     </style>
   </defs>
   
-  <!-- Central hub -->
-  <circle class="center" cx="200" cy="200" r="24"/>
+  <!-- Central circle hub -->
+  <circle cx="200" cy="200" r="45" class="primary"/>
+  
+  <!-- Four modular squares around center -->
+  <rect x="140" y="140" width="30" height="30" class="accent" rx="3"/>
+  <rect x="230" y="140" width="30" height="30" class="accent" rx="3"/>
+  <rect x="140" y="230" width="30" height="30" class="accent" rx="3"/>
+  <rect x="230" y="230" width="30" height="30" class="accent" rx="3"/>
   
   <!-- Connection lines -->
-  <line class="line" x1="200" y1="200" x2="140" y2="140"/>
-  <line class="line" x1="200" y1="200" x2="260" y2="140"/>
-  <line class="line" x1="200" y1="200" x2="140" y2="260"/>
-  <line class="line" x1="200" y1="200" x2="260" y2="260"/>
-  <line class="line" x1="200" y1="200" x2="200" y2="120"/>
-  <line class="line" x1="200" y1="200" x2="200" y2="280"/>
+  <line x1="170" y1="155" x2="185" y2="185" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"/>
+  <line x1="230" y1="155" x2="215" y2="185" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"/>
+  <line x1="170" y1="245" x2="185" y2="215" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"/>
+  <line x1="230" y1="245" x2="215" y2="215" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"/>
   
-  <!-- Outer nodes -->
-  <circle class="node" cx="140" cy="140" r="16"/>
-  <circle class="node" cx="260" cy="140" r="16"/>
-  <circle class="node" cx="140" cy="260" r="16"/>
-  <circle class="node" cx="260" cy="260" r="16"/>
-  <circle class="node" cx="200" cy="120" r="16"/>
-  <circle class="node" cx="200" cy="280" r="16"/>
+  <!-- Inner symbol in hub - simple unified mark -->
+  <path d="M 200 185 L 210 200 L 200 215 L 190 200 Z" class="light"/>
 </svg>
