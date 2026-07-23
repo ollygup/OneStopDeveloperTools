@@ -1,12 +1,28 @@
-<!-- logo.svg -->
-<svg width="180" height="32" viewBox="0 0 180 32" xmlns="http://www.w3.org/2000/svg">
-  <symbol id="mark" viewBox="0 0 32 32">
-    <rect width="32" height="32" rx="7" fill="#18181B"/>
-    <rect x="7" y="7" width="8" height="8" rx="1.5" fill="#2563EB"/>
-    <rect x="17" y="7" width="8" height="8" rx="1.5" fill="#FAFAFA" fill-opacity="0.9"/>
-    <rect x="7" y="17" width="8" height="8" rx="1.5" fill="#FAFAFA" fill-opacity="0.9"/>
-    <rect x="17" y="17" width="8" height="8" rx="1.5" fill="#2563EB"/>
-  </symbol>
-  <use href="#mark" width="32" height="32"/>
-  <text x="42" y="21" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="15" font-weight="600" letter-spacing="-0.2" fill="#18181B">Bench</text>
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .node { fill: #2c3e50; }
+      .line { stroke: #2c3e50; stroke-width: 2; fill: none; }
+      .center { fill: #3498db; }
+    </style>
+  </defs>
+  
+  <!-- Central hub -->
+  <circle class="center" cx="200" cy="200" r="24"/>
+  
+  <!-- Connection lines -->
+  <line class="line" x1="200" y1="200" x2="140" y2="140"/>
+  <line class="line" x1="200" y1="200" x2="260" y2="140"/>
+  <line class="line" x1="200" y1="200" x2="140" y2="260"/>
+  <line class="line" x1="200" y1="200" x2="260" y2="260"/>
+  <line class="line" x1="200" y1="200" x2="200" y2="120"/>
+  <line class="line" x1="200" y1="200" x2="200" y2="280"/>
+  
+  <!-- Outer nodes -->
+  <circle class="node" cx="140" cy="140" r="16"/>
+  <circle class="node" cx="260" cy="140" r="16"/>
+  <circle class="node" cx="140" cy="260" r="16"/>
+  <circle class="node" cx="260" cy="260" r="16"/>
+  <circle class="node" cx="200" cy="120" r="16"/>
+  <circle class="node" cx="200" cy="280" r="16"/>
 </svg>
