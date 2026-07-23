@@ -1,33 +1,23 @@
 <svg viewBox="90 90 220 220" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <style>
-      .o-stroke { 
-        fill: none; 
-        stroke: #1a1a1a; 
-        stroke-width: 28; 
-        stroke-linecap: round; 
-        stroke-linejoin: round; 
-      }
+      .o-stroke { fill: none; stroke: #1a1a1a; stroke-width: 28; stroke-linecap: round; stroke-linejoin: round; }
+      .s-fill { fill: #1a1a1a; }
     </style>
   </defs>
-
-  <!-- Outer O ring -->
+  
+  <!-- O circle -->
   <circle cx="200" cy="200" r="85" class="o-stroke"/>
 
   <!-- White inner background -->
   <circle cx="200" cy="200" r="70" fill="white"/>
-
-  <!-- S curve -->
-  <path 
-    d="M 200 150 
-       Q 230 150 230 175 
-       Q 230 200 200 200 
-       Q 170 200 170 225 
-       Q 170 250 200 250"
-    fill="none"
-    stroke="#6366f1"
-    stroke-width="20"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-  />
+  
+  <!-- S curve inside -->
+  <path d="M 200 150 Q 230 150 230 175 Q 230 200 200 200 Q 170 200 170 225 Q 170 250 200 250" 
+    class="s-fill" 
+    fill="none" 
+    stroke="#6366f1" 
+    stroke-width="20" 
+    stroke-linecap="round" 
+    stroke-linejoin="round"/>
 </svg>
