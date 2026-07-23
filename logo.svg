@@ -1,27 +1,17 @@
-<svg viewBox="120 120 160 160" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <style>
-      .primary { fill: #1a1a2e; }
-      .accent { fill: #00d4ff; }
-      .light { fill: #f0f0f0; }
+      .bg { fill: white; }
+      .mark { fill: none; stroke: #4C3FB5; stroke-width: 8; stroke-linecap: round; stroke-linejoin: round; }
     </style>
   </defs>
   
-  <!-- Central circle hub -->
-  <circle cx="200" cy="200" r="45" class="primary"/>
+  <rect class="bg" width="400" height="400"/>
   
-  <!-- Four modular squares around center -->
-  <rect x="140" y="140" width="30" height="30" class="accent" rx="3"/>
-  <rect x="230" y="140" width="30" height="30" class="accent" rx="3"/>
-  <rect x="140" y="230" width="30" height="30" class="accent" rx="3"/>
-  <rect x="230" y="230" width="30" height="30" class="accent" rx="3"/>
-  
-  <!-- Connection lines -->
-  <line x1="170" y1="155" x2="185" y2="185" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"/>
-  <line x1="230" y1="155" x2="215" y2="185" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"/>
-  <line x1="170" y1="245" x2="185" y2="215" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"/>
-  <line x1="230" y1="245" x2="215" y2="215" stroke="#00d4ff" stroke-width="2" stroke-linecap="round"/>
-  
-  <!-- Inner symbol in hub - simple unified mark -->
-  <path d="M 200 185 L 210 200 L 200 215 L 190 200 Z" class="light"/>
+  <g transform="translate(200, 200)">
+    <circle class="mark" cx="0" cy="0" r="60"/>
+    <line class="mark" x1="-25" y1="-15" x2="25" y2="-15"/>
+    <line class="mark" x1="-25" y1="5" x2="25" y2="5"/>
+    <line class="mark" x1="-25" y1="25" x2="15" y2="25"/>
+  </g>
 </svg>
