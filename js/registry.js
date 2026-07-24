@@ -3,12 +3,14 @@
 window.Bench = (function(){
   const sections = [
     { id: "hashing", label: "Hashing" },
+    { id: "json",    label: "JSON" },
     { id: "jwt",     label: "JWT" },
     { id: "text",    label: "Text Comparison" }
   ];
 
   const tools = []; // { id, section, label, mount(container) }
   const injectedStyles = new Set();
+  const bus = new EventTarget();
 
   function registerTool(def){
     if(!def.id || !def.section || !def.label || typeof def.mount !== "function"){
@@ -18,8 +20,6 @@ window.Bench = (function(){
     tools.push(def);
   }
 
-  // Injects a tool's own <style> block into <head> exactly once, so each
-  // tool's CSS travels with its own file instead of living in style.css.
   function injectStyle(id, cssText){
     if(injectedStyles.has(id)) return;
     const styleEl = document.createElement("style");
@@ -29,5 +29,10 @@ window.Bench = (function(){
     injectedStyles.add(id);
   }
 
-  return { sections, tools, registerTool, injectStyle };
+  // Minimal pub/sub so tools can hand data to one another
+  // (e.g. JSON Formatter → Text Comparison) without coupling.
+  function emit(name, detail){ bus.dispatchEvent(new CustomEvent(name, { detail })); }
+  function on(name, handler){ bus.addEventListener(name, e => handler(e.detail)); }
+
+  return { sections, tools, registerTool, injectStyle, emit, on };
 })();
