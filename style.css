@@ -97,6 +97,16 @@ body{
 
 /* ---------- Sidebar ---------- */
 .sidebar{
+  /* off-black nav — same teal/green hue family as the rest of the palette */
+  --panel:#16211F;
+  --panel-alt:#1E2E2B;
+  --border:#2C413C;
+  --ink:#ECF3F1;
+  --ink-muted:#9FB6B1;
+  --ink-faint:#66827C;
+  --accent:#5BC2B7;
+  --accent-soft:#1E3A37;
+
   width:var(--sidebar-w);
   flex:none;
   background:var(--panel);
