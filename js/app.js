@@ -123,5 +123,10 @@
     });
   };
 
+  Bench.goToTool = function(toolId, payload){
+    selectTool(toolId);
+    if(payload !== undefined) Bench.emit("tool:data:" + toolId, payload);
+  };
+  
   document.addEventListener("DOMContentLoaded", buildSidebar);
 })();
