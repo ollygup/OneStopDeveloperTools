@@ -5,32 +5,50 @@ Bench.registerTool({
   label: "JSON Formatter",
   mount(panel){
     Bench.injectStyle("json", `
-      .json-toolbar{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-bottom:14px; }
-      .json-toolbar select{
-        border:1px solid var(--border); background:var(--panel); border-radius:var(--radius-sm);
-        font-size:0.79em; padding:5px 8px; color:var(--ink-muted); font-family:var(--font-ui);
+      .json-output-wrap{ position:relative; }
+      .json-output{
+        font-family:var(--font-mono); font-size:0.9em; background:var(--panel-alt);
+        border:1px solid var(--border); border-radius:var(--radius); margin:0;
+        padding:40px 12px 12px; overflow-x:auto; max-width:100%;
+        white-space:pre-wrap; word-break:break-word;
       }
-      .json-btn{
-        border:1px solid var(--border); background:var(--panel); border-radius:var(--radius-sm);
-        font-size:0.79em; font-weight:500; padding:6px 10px; cursor:pointer; color:var(--ink-muted);
+      .json-output-tools{
+        position:absolute; top:8px; right:8px; z-index:1;
+        display:flex; align-items:center; gap:2px;
+        background:var(--panel); border:1px solid var(--border); border-radius:var(--radius-sm);
+        padding:3px; opacity:0.5; transition:opacity .12s ease;
       }
-      .json-btn:hover{ color:var(--accent); border-color:var(--accent); }
+      .json-output-wrap:hover .json-output-tools,
+      .json-output-tools:focus-within{ opacity:1; }
+      @media (hover:none){ .json-output-tools{ opacity:0.85; } }
+      .json-output-tools .json-sep{ width:1px; height:16px; background:var(--border); margin:0 2px; }
+      .json-indent-sel{
+        border:none; background:transparent; font-size:0.72em; color:var(--ink-muted);
+        padding:2px; font-family:var(--font-ui); cursor:pointer;
+      }
+      .json-icon-btn{
+        display:flex; align-items:center; justify-content:center;
+        width:26px; height:26px; border:none; background:none; border-radius:5px;
+        cursor:pointer; color:var(--ink-muted); padding:0;
+      }
+      .json-icon-btn:hover{ background:var(--panel-alt); color:var(--accent); }
+      .json-icon-btn.active{ color:var(--accent); }
+      .json-icon-btn.copied{ color:var(--ok); }
+      .json-icon-btn svg{ width:15px; height:15px; }
       .json-badge{
         display:inline-block; font-size:0.79em; font-family:var(--font-mono);
         padding:2px 7px; border-radius:4px; background:var(--ok-soft); color:var(--ok); margin-bottom:12px;
       }
       .json-badge.err{ background:var(--err-soft); color:var(--err); }
-      .json-output{
-        font-family:var(--font-mono); font-size:0.9em; background:var(--panel-alt);
-        border:1px solid var(--border); border-radius:var(--radius); padding:12px;
-        margin:0; overflow-x:auto; max-width:100%; white-space:pre-wrap; word-break:break-word;
-      }
-      .json-send{
-        display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin-top:14px;
-        padding-top:14px; border-top:1px solid var(--border);
-      }
-      .json-send-label{ font-size:0.79em; color:var(--ink-muted); margin-right:2px; }
     `);
+
+    const ICONS = {
+      copy: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V4a2 2 0 0 1 2-2h10"/></svg>`,
+      check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`,
+      compress: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg>`,
+      expand: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>`,
+      compare: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="7" height="16" rx="1"/><rect x="14" y="4" width="7" height="16" rx="1"/><line x1="10" y1="12" x2="14" y2="12"/><polyline points="12 9 15 12 12 15"/></svg>`
+    };
 
     panel.innerHTML = `
       <h1 class="tool-title">JSON Formatter</h1>
@@ -41,23 +59,21 @@ Bench.registerTool({
         <textarea id="json-input" rows="10" placeholder="Paste JSON here..."></textarea>
       </div>
 
-      <div class="json-toolbar">
-        <select id="json-indent">
-          <option value="2">2 spaces</option>
-          <option value="4">4 spaces</option>
-          <option value="tab">Tab</option>
-        </select>
-        <button type="button" class="json-btn" id="json-minify">Minify</button>
-        <button type="button" class="copy-btn" id="json-copy">Copy</button>
-      </div>
-
       <div id="json-status"></div>
-      <pre class="json-output" id="json-output" style="display:none"></pre>
 
-      <div class="json-send" id="json-send" style="display:none">
-        <span class="json-send-label">Compare against another JSON:</span>
-        <button type="button" class="json-btn" id="json-send-a">Send as Original →</button>
-        <button type="button" class="json-btn" id="json-send-b">Send as Changed →</button>
+      <div class="json-output-wrap" id="json-output-wrap" style="display:none">
+        <div class="json-output-tools">
+          <select class="json-indent-sel" id="json-indent" title="Indent">
+            <option value="2">2sp</option>
+            <option value="4">4sp</option>
+            <option value="tab">Tab</option>
+          </select>
+          <div class="json-sep"></div>
+          <button type="button" class="json-icon-btn" id="json-minify" title="Minify" aria-pressed="false">${ICONS.compress}</button>
+          <button type="button" class="json-icon-btn" id="json-compare" title="Copy to Compare">${ICONS.compare}</button>
+          <button type="button" class="json-icon-btn" id="json-copy" title="Copy">${ICONS.copy}</button>
+        </div>
+        <pre class="json-output" id="json-output"></pre>
       </div>
     `;
 
@@ -65,11 +81,10 @@ Bench.registerTool({
     const indentSel = panel.querySelector("#json-indent");
     const minifyBtn = panel.querySelector("#json-minify");
     const copyBtn = panel.querySelector("#json-copy");
+    const compareBtn = panel.querySelector("#json-compare");
     const statusEl = panel.querySelector("#json-status");
+    const outputWrap = panel.querySelector("#json-output-wrap");
     const outputEl = panel.querySelector("#json-output");
-    const sendRow = panel.querySelector("#json-send");
-    const sendABtn = panel.querySelector("#json-send-a");
-    const sendBBtn = panel.querySelector("#json-send-b");
 
     let minified = false;
     let lastFormatted = "";
@@ -93,8 +108,7 @@ Bench.registerTool({
     function render(){
       const text = input.value;
       statusEl.innerHTML = "";
-      outputEl.style.display = "none";
-      sendRow.style.display = "none";
+      outputWrap.style.display = "none";
       lastFormatted = "";
 
       if(text.trim() === "") return;
@@ -110,28 +124,40 @@ Bench.registerTool({
       statusEl.innerHTML = `<span class="json-badge">Valid JSON</span>`;
       lastFormatted = minified ? JSON.stringify(value) : JSON.stringify(value, null, indentArg());
       outputEl.textContent = lastFormatted;
-      outputEl.style.display = "block";
-      sendRow.style.display = "flex";
+      outputWrap.style.display = "block";
     }
 
     input.addEventListener("input", render);
-    indentSel.addEventListener("change", () => { minified = false; render(); });
+    indentSel.addEventListener("change", () => { minified = false; syncMinifyIcon(); render(); });
+
+    function syncMinifyIcon(){
+      minifyBtn.innerHTML = minified ? ICONS.expand : ICONS.compress;
+      minifyBtn.title = minified ? "Pretty-print" : "Minify";
+      minifyBtn.setAttribute("aria-pressed", String(minified));
+      minifyBtn.classList.toggle("active", minified);
+    }
 
     minifyBtn.addEventListener("click", () => {
       minified = !minified;
-      minifyBtn.textContent = minified ? "Pretty-print" : "Minify";
+      syncMinifyIcon();
       render();
     });
 
-    Bench.wireCopyButton(copyBtn, () => lastFormatted);
+    copyBtn.addEventListener("click", () => {
+      if(!lastFormatted) return;
+      navigator.clipboard.writeText(lastFormatted).then(() => {
+        copyBtn.innerHTML = ICONS.check;
+        copyBtn.classList.add("copied");
+        setTimeout(() => {
+          copyBtn.innerHTML = ICONS.copy;
+          copyBtn.classList.remove("copied");
+        }, 1200);
+      });
+    });
 
-    sendABtn.addEventListener("click", () => {
+    compareBtn.addEventListener("click", () => {
       if(!lastFormatted) return;
       Bench.goToTool("text-compare", { slot: "a", text: lastFormatted, json: true });
-    });
-    sendBBtn.addEventListener("click", () => {
-      if(!lastFormatted) return;
-      Bench.goToTool("text-compare", { slot: "b", text: lastFormatted, json: true });
     });
   }
 });
