@@ -26,7 +26,7 @@ Toolbox.registerTool({
 
     panel.innerHTML = `
       <h1 class="tool-title">Hash Generator</h1>
-      <p class="tool-desc">MD5, SHA-1, SHA-256, SHA-384, SHA-512. Computed in this tab — nothing is sent anywhere.</p>
+      <p class="tool-desc">Use with care, dont break this html.</p>
 
       <div class="field-group">
         <label class="field-label" for="hash-input">Input</label>

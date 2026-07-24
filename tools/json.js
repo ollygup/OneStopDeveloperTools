@@ -52,7 +52,7 @@ Toolbox.registerTool({
 
     panel.innerHTML = `
       <h1 class="tool-title">JSON Formatter</h1>
-      <p class="tool-desc">Validates and pretty-prints JSON as you type. Computed in this tab — nothing is sent anywhere.</p>
+      <p class="tool-desc">Validate + what the title says.</p>
 
       <div class="field-group">
         <label class="field-label" for="json-input">Input</label>

@@ -154,7 +154,7 @@ Toolbox.registerTool({
 
     panel.innerHTML = `
       <h1 class="tool-title">Text Comparison</h1>
-      <p class="tool-desc">Line-level diff with character-level highlighting. Both inputs stay in this tab.</p>
+      <p class="tool-desc">A description to help you understand the tool, where the description refers you back to the title of this tool.</p>
 
       <div class="cmp-inputs">
         <div class="field-group">
