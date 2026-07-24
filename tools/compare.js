@@ -176,6 +176,9 @@ Bench.registerTool({
         </div>
         <button type="button" class="cmp-toggle" id="cmp-ignore-ws" data-on="false">Ignore whitespace</button>
         <button type="button" class="cmp-toggle" id="cmp-ignore-case" data-on="false">Ignore case</button>
+        <button type="button" class="cmp-toggle" id="cmp-json-mode" data-on="false">JSON</button>
+        <button type="button" class="cmp-btn" id="cmp-format-json">Format JSON</button>
+        <span class="cmp-json-msg" id="cmp-json-msg"></span>
       </div>
 
       <div id="cmp-result" style="display:none">
@@ -378,13 +381,35 @@ Bench.registerTool({
       }).join("");
     }
 
+    function parseJsonSafe(text){
+      try{ return { ok:true, value: JSON.parse(text) }; }
+      catch(e){ return { ok:false, error:e }; }
+    }
+    
+    function prettyJson(text){
+      const r = parseJsonSafe(text);
+      return r.ok ? JSON.stringify(r.value, null, 2) : null;
+    }
+    
     function run(){
-      const a = aEl.value, b = bEl.value;
+      let a = aEl.value, b = bEl.value;
       if(a === "" && b === ""){ resultEl.style.display = "none"; return; }
-
+    
+      jsonMsgEl.textContent = "";
+      if(jsonToggle.dataset.on === "true"){
+        const prettyA = a.trim() === "" ? "" : prettyJson(a);
+        const prettyB = b.trim() === "" ? "" : prettyJson(b);
+        const bad = [];
+        if(a.trim() !== "" && prettyA === null) bad.push("Original");
+        if(b.trim() !== "" && prettyB === null) bad.push("Changed");
+        if(bad.length) jsonMsgEl.textContent = `${bad.join(" & ")} invalid JSON — diffing raw text`;
+        if(prettyA !== null) a = prettyA;
+        if(prettyB !== null) b = prettyB;
+      }
+      
       const ignoreWs = wsToggle.dataset.on === "true";
       const ignoreCase = caseToggle.dataset.on === "true";
-
+    
       const { ops, added, removed, oldTotal, newTotal } = diffLines(a, b, ignoreWs, ignoreCase);
 
       removalsEl.textContent = `${removed} removal${removed === 1 ? "" : "s"}`;
@@ -414,13 +439,36 @@ Bench.registerTool({
       });
     });
 
-    [wsToggle, caseToggle].forEach(btn => {
+    [wsToggle, caseToggle, jsonToggle].forEach(btn => {
       btn.addEventListener("click", () => {
         const on = btn.dataset.on === "true";
         btn.dataset.on = on ? "false" : "true";
         btn.classList.toggle("active", !on);
         if(resultEl.style.display !== "none") run();
       });
+    });
+
+    formatJsonBtn.addEventListener("click", () => {
+      const prettyA = aEl.value.trim() === "" ? null : prettyJson(aEl.value);
+      const prettyB = bEl.value.trim() === "" ? null : prettyJson(bEl.value);
+      const bad = [];
+      if(aEl.value.trim() !== "" && prettyA === null) bad.push("Original");
+      if(bEl.value.trim() !== "" && prettyB === null) bad.push("Changed");
+      if(prettyA !== null) aEl.value = prettyA;
+      if(prettyB !== null) bEl.value = prettyB;
+      jsonMsgEl.textContent = bad.length ? `${bad.join(" & ")} invalid JSON — left unchanged` : "";
+      if(resultEl.style.display !== "none") run();
+    });
+
+    Bench.on("tool:data:text-compare", payload => {
+      if(!payload) return;
+      const targetEl = payload.slot === "b" ? bEl : aEl;
+      targetEl.value = payload.text || "";
+      if(payload.json && jsonToggle.dataset.on !== "true"){
+        jsonToggle.dataset.on = "true";
+        jsonToggle.classList.add("active");
+      }
+      run();
     });
 
     Bench.wireCopyButton(copyABtn, () => aEl.value);
