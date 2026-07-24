@@ -10,8 +10,8 @@
   let activeToolId = null;
 
   function buildSidebar(){
-    Bench.sections.forEach(section => {
-      const sectionTools = Bench.tools.filter(t => t.section === section.id);
+    Toolbox.sections.forEach(section => {
+      const sectionTools = Toolbox.tools.filter(t => t.section === section.id);
       if(sectionTools.length === 0) return;
 
       const sectionEl = document.createElement("div");
@@ -64,7 +64,7 @@
 
       // Mount lazily on first visit.
       if(!mountedPanels[toolId]){
-        const tool = Bench.tools.find(t => t.id === toolId);
+        const tool = Toolbox.tools.find(t => t.id === toolId);
         if(!tool) return;
 
         const panel = document.createElement("div");
@@ -109,7 +109,7 @@
   }
 
   // Small shared helper other tool files can use for copy-to-clipboard buttons.
-  Bench.wireCopyButton = function(button, getText){
+  Toolbox.wireCopyButton = function(button, getText){
     button.addEventListener("click", () => {
       const text = getText();
       navigator.clipboard.writeText(text).then(() => {
@@ -123,9 +123,9 @@
     });
   };
 
-  Bench.goToTool = function(toolId, payload){
+  Toolbox.goToTool = function(toolId, payload){
     selectTool(toolId);
-    if(payload !== undefined) Bench.emit("tool:data:" + toolId, payload);
+    if(payload !== undefined) Toolbox.emit("tool:data:" + toolId, payload);
   };
   
   document.addEventListener("DOMContentLoaded", buildSidebar);

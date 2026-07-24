@@ -1,10 +1,10 @@
 // tools/jwt.js — component + its own scoped CSS
-Bench.registerTool({
+Toolbox.registerTool({
   id: "jwt-decoder",
   section: "jwt",
   label: "JWT Decoder",
   mount(panel){
-    Bench.injectStyle("jwt", `
+    Toolbox.injectStyle("jwt", `
       .jwt-part{ margin-bottom:16px; }
       .jwt-part pre{
         font-family:var(--font-mono);

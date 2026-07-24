@@ -259,7 +259,7 @@ textarea:focus, input[type="text"]:focus{
 
 .field-group{ margin-bottom:18px; }
 
-/* Shared copy-button component (Bench.wireCopyButton), reused across tools. */
+/* Shared copy-button component (Toolbox.wireCopyButton), reused across tools. */
 .copy-btn{
   flex:none;
   border:1px solid var(--border);

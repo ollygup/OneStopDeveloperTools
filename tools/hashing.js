@@ -1,10 +1,10 @@
 // tools/hashing.js — component + its own scoped CSS
-Bench.registerTool({
+Toolbox.registerTool({
   id: "hashing",
   section: "hashing",
   label: "Hash Generator",
   mount(panel){
-    Bench.injectStyle("hashing", `
+    Toolbox.injectStyle("hashing", `
       .output-row{
         display:flex;
         align-items:center;
@@ -76,7 +76,7 @@ Bench.registerTool({
     input.addEventListener("input", recompute);
 
     outputsEl.querySelectorAll("[data-algo-copy]").forEach(btn => {
-      Bench.wireCopyButton(btn, () => {
+      Toolbox.wireCopyButton(btn, () => {
         const kind = btn.getAttribute("data-algo-copy");
         return outputsEl.querySelector(`[data-algo="${kind}"]`).textContent;
       });

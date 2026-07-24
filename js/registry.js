@@ -1,6 +1,6 @@
 // js/registry.js — shared registry + a tiny helper so each tool can ship
 // its own CSS from its own file (only injected once, on first mount).
-window.Bench = (function(){
+window.Toolbox = (function(){
   const sections = [
     { id: "hashing", label: "Hashing" },
     { id: "json",    label: "JSON" },

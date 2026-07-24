@@ -1,10 +1,10 @@
 // tools/json.js — component + its own scoped CSS
-Bench.registerTool({
+Toolbox.registerTool({
   id: "json-formatter",
   section: "json",
   label: "JSON Formatter",
   mount(panel){
-    Bench.injectStyle("json", `
+    Toolbox.injectStyle("json", `
       .json-output-wrap{ position:relative; }
       .json-output{
         font-family:var(--font-mono); font-size:0.9em; background:var(--panel-alt);
@@ -157,7 +157,7 @@ Bench.registerTool({
 
     compareBtn.addEventListener("click", () => {
       if(!lastFormatted) return;
-      Bench.goToTool("text-compare", { slot: "a", text: lastFormatted, json: true });
+      Toolbox.goToTool("text-compare", { slot: "a", text: lastFormatted, json: true });
     });
   }
 });

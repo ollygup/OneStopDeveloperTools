@@ -1,10 +1,10 @@
 // tools/compare.js — component + its own scoped CSS
-Bench.registerTool({
+Toolbox.registerTool({
   id: "text-compare",
   section: "text",
   label: "Text Comparison",
   mount(panel){
-    Bench.injectStyle("compare", `
+    Toolbox.injectStyle("compare", `
       .cmp-json-msg{ font-size:0.77em; color:var(--err); }
       .cmp-inputs{
         display:flex;
@@ -463,7 +463,7 @@ Bench.registerTool({
       if(resultEl.style.display !== "none") run();
     });
 
-    Bench.on("tool:data:text-compare", payload => {
+    Toolbox.on("tool:data:text-compare", payload => {
       if(!payload) return;
       aEl.value = payload.text || "";
       if(payload.json && jsonToggle.dataset.on !== "true"){
@@ -473,7 +473,7 @@ Bench.registerTool({
       run();
     });
 
-    Bench.wireCopyButton(copyABtn, () => aEl.value);
-    Bench.wireCopyButton(copyBBtn, () => bEl.value);
+    Toolbox.wireCopyButton(copyABtn, () => aEl.value);
+    Toolbox.wireCopyButton(copyBBtn, () => bEl.value);
   }
 });
