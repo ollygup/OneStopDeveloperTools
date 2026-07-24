@@ -465,8 +465,7 @@ Bench.registerTool({
 
     Bench.on("tool:data:text-compare", payload => {
       if(!payload) return;
-      const targetEl = payload.slot === "b" ? bEl : aEl;
-      targetEl.value = payload.text || "";
+      aEl.value = payload.text || "";
       if(payload.json && jsonToggle.dataset.on !== "true"){
         jsonToggle.dataset.on = "true";
         jsonToggle.classList.add("active");
