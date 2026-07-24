@@ -218,6 +218,9 @@ Bench.registerTool({
     const caseToggle = panel.querySelector("#cmp-ignore-case");
     const copyABtn = panel.querySelector("#cmp-copy-a");
     const copyBBtn = panel.querySelector("#cmp-copy-b");
+    const jsonToggle = panel.querySelector("#cmp-json-mode");
+    const formatJsonBtn = panel.querySelector("#cmp-format-json");
+    const jsonMsgEl = panel.querySelector("#cmp-json-msg");
 
     let viewMode = "split"; // "split" | "inline"
 
