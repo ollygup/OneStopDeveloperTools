@@ -5,6 +5,7 @@ Bench.registerTool({
   label: "Text Comparison",
   mount(panel){
     Bench.injectStyle("compare", `
+      .cmp-json-msg{ font-size:0.77em; color:var(--err); }
       .cmp-inputs{
         display:flex;
         flex-direction:row;
